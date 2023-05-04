@@ -57,9 +57,12 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer> &gRenderer)
     thickLineColor(gRenderer.get(), x1, y1, x2, y2, 25, 0xFF0000FF);
     thickLineColor(gRenderer.get(), x4, y4, x3, y3, 10, 0xFF0000FF);
     thickLineColor(gRenderer.get(), x41, y41, x31, y31, 10, 0xFF0000FF);
-    filledEllipseColor(gRenderer.get(), x51, y51, 80, 7, 0x73a46c00);
-    aaellipseColor(gRenderer.get(), x51, y51, 80, 7, 0xffffffff);
-    filledEllipseColor(gRenderer.get(), x52, y52, 80, 7, 0x73a46c00);
-     aaellipseColor(gRenderer.get(), x52, y52, 80, 7, 0xffffffff);
-
+    filledEllipseColor(gRenderer.get(), x3-40, y3, 40, 7, 0x73a46c00);
+    filledEllipseColor(gRenderer.get(), x3+40, y3, 40, 7, 0x73a46c00);
+    aaellipseColor(gRenderer.get(),  x3-40, y3, 40, 7, 0xffffffff);
+    aaellipseColor(gRenderer.get(),  x3+40, y3, 40, 7, 0xffffffff);
+    filledEllipseColor(gRenderer.get(), x31-40, y31, 40, 7, 0x73a46c00);
+    filledEllipseColor(gRenderer.get(), x31+40, y31, 40, 7, 0x73a46c00);
+    aaellipseColor(gRenderer.get(),  x31-40, y31, 40, 7, 0xffffffff);
+    aaellipseColor(gRenderer.get(),  x31+40, y31, 40, 7, 0xffffffff);
 }
