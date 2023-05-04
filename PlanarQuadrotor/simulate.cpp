@@ -47,6 +47,7 @@ int main(int argc, char* args[])
     Eigen::VectorXf initial_state = Eigen::VectorXf::Zero(6);
     initial_state(0) = 640;
     initial_state(1) = 360;
+    initial_state(2) = 0;
 
     PlanarQuadrotor quadrotor(initial_state);
     PlanarQuadrotorVisualizer quadrotor_visualizer(&quadrotor);
@@ -55,11 +56,12 @@ int main(int argc, char* args[])
      * [x, y, theta, x_dot, y_dot, theta_dot]
      * For implemented LQR controller, it has to be [x, y, 0, 0, 0, 0]
     */
+
     Eigen::VectorXf goal_state = Eigen::VectorXf::Zero(6);
-    goal_state << 800, 400, 0, 0, 0, 0;
+    goal_state << 640, 360, 0, 0, 0, 0;
     quadrotor.SetGoal(goal_state);
     /* Timestep for the simulation */
-    const float dt = 0.05;
+    const float dt = 0.02;
     Eigen::MatrixXf K = LQR(quadrotor, dt);
     Eigen::Vector2f input = Eigen::Vector2f::Zero(2);
 
@@ -88,6 +90,12 @@ int main(int argc, char* args[])
                 if (e.type == SDL_QUIT)
                 {
                     quit = true;
+                }
+                else if (e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    SDL_GetMouseState(&x, &y);
+                    goal_state << x, y, 0, 0, 0, 0;
+                    quadrotor.SetGoal(goal_state);
                 }
                 else if (e.type == SDL_MOUSEMOTION)
                 {

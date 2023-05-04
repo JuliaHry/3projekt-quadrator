@@ -18,7 +18,7 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer> &gRenderer)
     q_y = state[1];
     q_theta = state[2];
 
-    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0x00, 0x00, 0x0FF);
+    SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0x00FF, 0x0FF);
     float x1 = q_x-125*cos(q_theta);
     float x2 = 125*cos(q_theta)+q_x;
     float y1 = q_y-125*sin(q_theta);
@@ -58,6 +58,8 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer> &gRenderer)
     thickLineColor(gRenderer.get(), x4, y4, x3, y3, 10, 0xFF0000FF);
     thickLineColor(gRenderer.get(), x41, y41, x31, y31, 10, 0xFF0000FF);
     filledEllipseColor(gRenderer.get(), x51, y51, 80, 7, 0x73a46c00);
+    aaellipseColor(gRenderer.get(), x51, y51, 80, 7, 0xffffffff);
     filledEllipseColor(gRenderer.get(), x52, y52, 80, 7, 0x73a46c00);
+     aaellipseColor(gRenderer.get(), x52, y52, 80, 7, 0xffffffff);
 
 }
