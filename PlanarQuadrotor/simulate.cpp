@@ -2,6 +2,7 @@
  * SDL window creation adapted from https://github.com/isJuhn/DoublePendulum
 */
 #include "simulate.h"
+#include <matplot/matplot.h>
 
 Eigen::MatrixXf LQR(PlanarQuadrotor &quadrotor, float dt) {
     /* Calculate LQR gain matrix */
@@ -15,7 +16,7 @@ Eigen::MatrixXf LQR(PlanarQuadrotor &quadrotor, float dt) {
     Eigen::MatrixXf K = Eigen::MatrixXf::Zero(6, 6);
     Eigen::Vector2f input = quadrotor.GravityCompInput();
 
-  Q.diagonal() << 4e-3, 4e-3, 4e2, 8e-3, 4.5e-2, 2 / 2 / M_PI;
+    Q.diagonal() << 4e-3, 4e-3, 4e2, 8e-3, 4.5e-2, 2 / 2 / M_PI;
     R.row(0) << 3e1, 7;
     R.row(1) << 7, 3e1;
 
@@ -41,12 +42,12 @@ int main(int argc, char* args[])
     /**
      * TODO: Extend simulation
      * 1. Set goal state of the mouse when clicking left mouse button (transform the coordinates to the quadrotor world! see visualizer TODO list)
-     *    [x, y, 0, 0, 0, 0]
-     * 2. Update PlanarQuadrotor from simulation when goal is changed
+     *    [x, y, 0, 0, 0, 0] ++
+     * 2. Update PlanarQuadrotor from simulation when goal is changed ++
     */
     Eigen::VectorXf initial_state = Eigen::VectorXf::Zero(6);
-    initial_state(0) = 640;
-    initial_state(1) = 360;
+    initial_state(0) = SCREEN_WIDTH/2;
+    initial_state(1) = SCREEN_HEIGHT/2;
     initial_state(2) = 0;
 
     PlanarQuadrotor quadrotor(initial_state);
@@ -58,21 +59,23 @@ int main(int argc, char* args[])
     */
 
     Eigen::VectorXf goal_state = Eigen::VectorXf::Zero(6);
-    goal_state << 640, 360, 0, 0, 0, 0;
+    goal_state << SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0, 0, 0, 0;
     quadrotor.SetGoal(goal_state);
     /* Timestep for the simulation */
-    const float dt = 0.02;
+    const float dt = 0.03;
     Eigen::MatrixXf K = LQR(quadrotor, dt);
     Eigen::Vector2f input = Eigen::Vector2f::Zero(2);
 
     /**
      * TODO: Plot x, y, theta over time
-     * 1. Update x, y, theta history vectors to store trajectory of the quadrotor
+     * 1. Update x, y, theta history vectors to store trajectory of the quadrotor 
      * 2. Plot trajectory using matplot++ when key 'p' is clicked
     */
+
     std::vector<float> x_history;
     std::vector<float> y_history;
     std::vector<float> theta_history;
+    float stan;
 
     if (init(gWindow, gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT) >= 0)
     {
@@ -81,12 +84,22 @@ int main(int argc, char* args[])
         float delay;
         int x, y;
         Eigen::VectorXf state = Eigen::VectorXf::Zero(6);
+        Eigen::VectorXf stan;
+       
 
         while (!quit)
         {
+            
             //events
+             stan = quadrotor.GetState();
+            
+            x_history.push_back(stan[0]);
+            y_history.push_back(stan[1]);
+            theta_history.push_back(stan[2]);
             while (SDL_PollEvent(&e) != 0)
             {
+                
+
                 if (e.type == SDL_QUIT)
                 {
                     quit = true;
@@ -96,6 +109,16 @@ int main(int argc, char* args[])
                     SDL_GetMouseState(&x, &y);
                     goal_state << x, y, 0, 0, 0, 0;
                     quadrotor.SetGoal(goal_state);
+                }
+                else if(e.type==SDL_KEYDOWN)
+                {
+                    std::cout << "yass";
+                    while (!x_history.empty())
+                    {
+                        std::cout << x_history.back() << ' ';
+                        x_history.pop_back();
+                    }
+                    
                 }
                 else if (e.type == SDL_MOUSEMOTION)
                 {
@@ -118,6 +141,7 @@ int main(int argc, char* args[])
             /* Simulate quadrotor forward in time */
             control(quadrotor, K);
             quadrotor.Update(dt);
+           
         }
     }
     SDL_Quit();

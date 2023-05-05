@@ -18,6 +18,9 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer> &gRenderer)
     q_y = state[1];
     q_theta = state[2];
 
+    
+
+
     SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0x00FF, 0x0FF);
     float x1 = q_x-125*cos(q_theta);
     float x2 = 125*cos(q_theta)+q_x;
@@ -31,7 +34,7 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer> &gRenderer)
     float x3 = q_x - l*cos(alpha+q_theta);
     float y3 = q_y - l*sin(alpha+q_theta);
     float x4 = q_x - 90*cos(q_theta);
-    float y4 = q_y - 90*sin(q_theta);
+    float y4 = q_y - 90*sin(q_theta); 
 
     
     float x31 = q_x + l*cos(-alpha+q_theta);
