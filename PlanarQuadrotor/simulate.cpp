@@ -3,6 +3,8 @@
 */
 #include "simulate.h"
 #include <matplot/matplot.h>
+#include <ctime>
+#include <vector>
 
 Eigen::MatrixXf LQR(PlanarQuadrotor &quadrotor, float dt) {
     /* Calculate LQR gain matrix */
@@ -34,10 +36,12 @@ void control(PlanarQuadrotor &quadrotor, const Eigen::MatrixXf &K) {
 
 int main(int argc, char* args[])
 {
+    using namespace matplot;
     std::shared_ptr<SDL_Window> gWindow = nullptr;
     std::shared_ptr<SDL_Renderer> gRenderer = nullptr;
     const int SCREEN_WIDTH = 1280;
     const int SCREEN_HEIGHT = 720;
+
 
     /**
      * TODO: Extend simulation
@@ -65,6 +69,8 @@ int main(int argc, char* args[])
     const float dt = 0.03;
     Eigen::MatrixXf K = LQR(quadrotor, dt);
     Eigen::Vector2f input = Eigen::Vector2f::Zero(2);
+    float czas = dt;
+    std::vector<float> time;
 
     /**
      * TODO: Plot x, y, theta over time
@@ -84,18 +90,13 @@ int main(int argc, char* args[])
         float delay;
         int x, y;
         Eigen::VectorXf state = Eigen::VectorXf::Zero(6);
-        Eigen::VectorXf stan;
        
 
         while (!quit)
         {
             
             //events
-             stan = quadrotor.GetState();
-            
-            x_history.push_back(stan[0]);
-            y_history.push_back(stan[1]);
-            theta_history.push_back(stan[2]);
+             
             while (SDL_PollEvent(&e) != 0)
             {
                 
@@ -112,20 +113,18 @@ int main(int argc, char* args[])
                 }
                 else if(e.type==SDL_KEYDOWN)
                 {
-                    std::cout << "yass";
-                    while (!x_history.empty())
-                    {
-                        std::cout << x_history.back() << ' ';
-                        x_history.pop_back();
-                    }
-                    
+                    auto l_3 = plot(time, x_history);
+                    show();
+                    auto l_4 = plot(time, y_history);
+                    show();
+                    auto l_5 = plot(time, theta_history);
+                    show();
                 }
                 else if (e.type == SDL_MOUSEMOTION)
                 {
                     SDL_GetMouseState(&x, &y);
                     std::cout << "Mouse position: (" << x << ", " << y << ")" << std::endl;
                 }
-                
             }
 
             SDL_Delay((int) dt * 1000);
@@ -140,8 +139,12 @@ int main(int argc, char* args[])
 
             /* Simulate quadrotor forward in time */
             control(quadrotor, K);
-            quadrotor.Update(dt);
-           
+            state = quadrotor.Update(dt);
+                x_history.push_back(state[0]);
+                y_history.push_back(state[1]);
+                theta_history.push_back(state[2]);
+                czas += 0.03;
+                time.push_back(czas);
         }
     }
     SDL_Quit();
