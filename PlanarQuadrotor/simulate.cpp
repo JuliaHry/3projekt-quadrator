@@ -74,7 +74,7 @@ int main(int argc, char* args[])
 
     /**
      * TODO: Plot x, y, theta over time
-     * 1. Update x, y, theta history vectors to store trajectory of the quadrotor 
+     * 1. Update x, y, theta history vectors to store trajectory of the quadrotor ++
      * 2. Plot trajectory using matplot++ when key 'p' is clicked
     */
 
@@ -99,8 +99,6 @@ int main(int argc, char* args[])
              
             while (SDL_PollEvent(&e) != 0)
             {
-                
-
                 if (e.type == SDL_QUIT)
                 {
                     quit = true;
@@ -113,12 +111,18 @@ int main(int argc, char* args[])
                 }
                 else if(e.type==SDL_KEYDOWN)
                 {
+                    if (e.key.keysym.sym == SDLK_p)
+                    {
+                        ylabel("zmiany x");
                     auto l_3 = plot(time, x_history);
                     show();
+                    ylabel("zmiany y");
                     auto l_4 = plot(time, y_history);
                     show();
+                    ylabel("zmiany theta");
                     auto l_5 = plot(time, theta_history);
                     show();
+                    }
                 }
                 else if (e.type == SDL_MOUSEMOTION)
                 {
@@ -140,11 +144,11 @@ int main(int argc, char* args[])
             /* Simulate quadrotor forward in time */
             control(quadrotor, K);
             state = quadrotor.Update(dt);
-                x_history.push_back(state[0]);
-                y_history.push_back(state[1]);
-                theta_history.push_back(state[2]);
-                czas += 0.03;
-                time.push_back(czas);
+            x_history.push_back(state[0]);
+            y_history.push_back(state[1]);
+            theta_history.push_back(state[2]);
+            czas += 0.03;
+            time.push_back(czas);
         }
     }
     SDL_Quit();
