@@ -5,6 +5,8 @@
 #include <matplot/matplot.h>
 #include <ctime>
 #include <vector>
+#include <cstdlib>
+#include <time.h>
 
 Eigen::MatrixXf LQR(PlanarQuadrotor &quadrotor, float dt) {
     /* Calculate LQR gain matrix */
@@ -50,8 +52,11 @@ int main(int argc, char* args[])
      * 2. Update PlanarQuadrotor from simulation when goal is changed ++
     */
     Eigen::VectorXf initial_state = Eigen::VectorXf::Zero(6);
-    initial_state(0) = SCREEN_WIDTH/2;
-    initial_state(1) = SCREEN_HEIGHT/2;
+    srand(time(NULL));
+    int a = 1 + rand() % 1280;
+    int b = 1 + rand() % 720;
+    initial_state(0) = a;
+    initial_state(1) = b;
     initial_state(2) = 0;
 
     PlanarQuadrotor quadrotor(initial_state);
